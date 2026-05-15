@@ -1,3 +1,5 @@
+import { resetProgress } from './store';
+
 const AUTH_KEY = 'demo_auth';
 
 const CREDENTIALS = {
@@ -15,6 +17,7 @@ export function login(email: string, password: string): AuthUser | null {
     const user: AuthUser = { email, name: 'Student' };
     if (typeof window !== 'undefined') {
       localStorage.setItem(AUTH_KEY, JSON.stringify(user));
+      resetProgress();
     }
     return user;
   }
