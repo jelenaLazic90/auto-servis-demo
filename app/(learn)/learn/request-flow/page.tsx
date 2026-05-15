@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import StepByStep from '@/components/learn/StepByStep';
 import { markCompleted } from '@/lib/store';
 
@@ -65,6 +65,8 @@ const requestFlowSteps = [
 ];
 
 export default function RequestFlowPage() {
+  const [activeStep, setActiveStep] = useState(0);
+
   useEffect(() => {
     markCompleted('request-flow');
   }, []);
@@ -80,16 +82,22 @@ export default function RequestFlowPage() {
         </p>
       </div>
 
-      <StepByStep steps={requestFlowSteps} title="10 koraka HTTP zahteva" />
+      <StepByStep steps={requestFlowSteps} title="10 koraka HTTP zahteva" onStepChange={setActiveStep} />
 
       {/* Summary */}
       <div className="p-6 rounded-2xl bg-gradient-to-br from-indigo-500/10 to-purple-500/5 border border-indigo-500/20">
         <h3 className="text-lg font-semibold text-white mb-4">Rezime toka</h3>
         <div className="flex flex-wrap items-center gap-2 text-sm">
-          {['Klik', 'React', 'Axios', 'Express', 'Auth', 'Validator', 'Controller', 'Sequelize', 'MySQL', 'Response'].map((step, i) => (
+          {['Klik', 'React', 'Axios', 'Express', 'Auth', 'Router', 'Validator', 'Controller', 'Sequelize + MySQL', 'Response'].map((step, i) => (
             <React.Fragment key={step}>
-              <span className="px-3 py-1.5 bg-indigo-500/20 text-indigo-300 rounded-xl border border-indigo-500/20 hover:bg-indigo-500/30 transition-colors font-medium">{step}</span>
-              {i < 9 && <span className="text-indigo-400/40 animate-pulse">→</span>}
+              <span className={`px-3 py-1.5 rounded-xl border font-medium transition-all ${
+                i === activeStep
+                  ? 'bg-indigo-500/30 text-indigo-200 border-indigo-400/50 shadow-lg shadow-indigo-500/20 scale-110'
+                  : i < activeStep
+                  ? 'bg-emerald-500/15 text-emerald-300 border-emerald-500/20'
+                  : 'bg-slate-800/50 text-slate-500 border-slate-700/30'
+              }`}>{step}</span>
+              {i < 9 && <span className={`text-xl ${i < activeStep ? 'text-emerald-400/40' : i === activeStep ? 'text-indigo-400/60' : 'text-slate-700/40'}`}>→</span>}
             </React.Fragment>
           ))}
         </div>

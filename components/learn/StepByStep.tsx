@@ -12,14 +12,16 @@ export interface Step {
 interface StepByStepProps {
   steps: Step[];
   title?: string;
+  onStepChange?: (step: number) => void;
 }
 
-export default function StepByStep({ steps, title }: StepByStepProps) {
+export default function StepByStep({ steps, title, onStepChange }: StepByStepProps) {
   const [activeStep, setActiveStep] = useState(0);
   const contentRef = React.useRef<HTMLDivElement>(null);
 
   const goToStep = (step: number) => {
     setActiveStep(step);
+    onStepChange?.(step);
     setTimeout(() => {
       contentRef.current?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
     }, 50);
