@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useRef, useCallback } from 'react';
 
 export interface Step {
   title: string;
@@ -17,12 +17,28 @@ interface StepByStepProps {
 
 export default function StepByStep({ steps, title, onStepChange }: StepByStepProps) {
   const [activeStep, setActiveStep] = useState(0);
-  const contentRef = React.useRef<HTMLDivElement>(null);
+  const contentRef = useRef<HTMLDivElement>(null);
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
+  const buttonRefs = useRef<(HTMLButtonElement | null)[]>([]);
+
+  const scrollTabIntoView = useCallback((index: number) => {
+    const container = scrollContainerRef.current;
+    const button = buttonRefs.current[index];
+    if (!container || !button) return;
+
+    const containerRect = container.getBoundingClientRect();
+    const buttonRect = button.getBoundingClientRect();
+
+    // Center the button in the scroll container
+    const scrollLeft = button.offsetLeft - container.offsetWidth / 2 + button.offsetWidth / 2;
+    container.scrollTo({ left: scrollLeft, behavior: 'smooth' });
+  }, []);
 
   const goToStep = (step: number) => {
     setActiveStep(step);
     onStepChange?.(step);
     setTimeout(() => {
+      scrollTabIntoView(step);
       contentRef.current?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
     }, 50);
   };
@@ -32,10 +48,11 @@ export default function StepByStep({ steps, title, onStepChange }: StepByStepPro
       {title && <h3 className="text-lg font-semibold text-slate-200">{title}</h3>}
 
       {/* Step indicators */}
-      <div className="flex gap-2 overflow-x-auto pb-2">
+      <div ref={scrollContainerRef} className="flex gap-2 overflow-x-auto pb-2 scroll-smooth">
         {steps.map((step, i) => (
           <button
             key={i}
+            ref={(el) => { buttonRefs.current[i] = el; }}
             onClick={() => goToStep(i)}
             className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm whitespace-nowrap transition-all ${
               i === activeStep
