@@ -44,6 +44,89 @@ export default function BackendPage() {
           Cela magija je u <strong className="text-slate-200">middleware</strong> funkcijama — svaki zahtev prolazi kroz lanac funkcija.
         </p>
         <FlowDiagram nodes={middlewareChain} title="Middleware lanac" />
+
+        {/* Middleware explanations */}
+        <div className="space-y-3">
+          <h3 className="text-base font-semibold text-slate-300">Šta radi svaki middleware?</h3>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div className="p-4 rounded-xl bg-gradient-to-br from-red-500/10 to-red-500/5 border border-red-500/20">
+              <div className="flex items-center gap-2 mb-2">
+                <span>🛡️</span>
+                <h4 className="font-semibold text-red-300 text-sm">Helmet</h4>
+              </div>
+              <p className="text-xs text-slate-400 leading-relaxed">
+                Automatski dodaje sigurnosne HTTP header-e na svaki odgovor. Sprečava XSS napade, clickjacking,
+                MIME-type sniffing i druge česte napade. Kao zaštitna kaciga za tvoj server.
+              </p>
+            </div>
+            <div className="p-4 rounded-xl bg-gradient-to-br from-yellow-500/10 to-amber-500/5 border border-yellow-500/20">
+              <div className="flex items-center gap-2 mb-2">
+                <span>🌐</span>
+                <h4 className="font-semibold text-yellow-300 text-sm">CORS</h4>
+              </div>
+              <p className="text-xs text-slate-400 leading-relaxed">
+                Cross-Origin Resource Sharing — kontroliše ko sme da pristupa tvom API-ju.
+                Browser podrazumevano blokira zahteve sa drugih domena. CORS definiše da frontend
+                na localhost:3000 sme da pristupi backendu na localhost:5000.
+              </p>
+            </div>
+            <div className="p-4 rounded-xl bg-gradient-to-br from-slate-500/10 to-slate-500/5 border border-slate-600/20">
+              <div className="flex items-center gap-2 mb-2">
+                <span>📦</span>
+                <h4 className="font-semibold text-slate-300 text-sm">JSON Parser</h4>
+              </div>
+              <p className="text-xs text-slate-400 leading-relaxed">
+                Express sam po sebi ne razume JSON body u zahtevima. <code className="text-blue-400">express.json()</code> parsira
+                JSON iz request body-ja i stavlja ga u <code className="text-blue-400">req.body</code> objekat,
+                tako da u kontroleru možeš čitati podatke koje je frontend poslao.
+              </p>
+            </div>
+            <div className="p-4 rounded-xl bg-gradient-to-br from-blue-500/10 to-indigo-500/5 border border-blue-500/20">
+              <div className="flex items-center gap-2 mb-2">
+                <span>📝</span>
+                <h4 className="font-semibold text-blue-300 text-sm">Logger (Morgan + Winston)</h4>
+              </div>
+              <p className="text-xs text-slate-400 leading-relaxed">
+                Automatski loguje svaki HTTP zahtev — metod, URL, status kod, vreme trajanja.
+                Morgan ispisuje u konzoli (dev), Winston čuva u fajlove (produkcija).
+                Bez toga ne bi znao šta se dešava na serveru.
+              </p>
+            </div>
+            <div className="p-4 rounded-xl bg-gradient-to-br from-amber-500/10 to-orange-500/5 border border-amber-500/20">
+              <div className="flex items-center gap-2 mb-2">
+                <span>🚦</span>
+                <h4 className="font-semibold text-amber-300 text-sm">Rate Limiter</h4>
+              </div>
+              <p className="text-xs text-slate-400 leading-relaxed">
+                Ograničava broj zahteva po IP adresi — npr. max 100 zahteva po minutu.
+                Za login endpoint još strože: 5 pokušaja po minutu. Štiti od brute-force
+                napada i sprečava da neko preoptereti server.
+              </p>
+            </div>
+            <div className="p-4 rounded-xl bg-gradient-to-br from-emerald-500/10 to-teal-500/5 border border-emerald-500/20">
+              <div className="flex items-center gap-2 mb-2">
+                <span>🔀</span>
+                <h4 className="font-semibold text-emerald-300 text-sm">Routes</h4>
+              </div>
+              <p className="text-xs text-slate-400 leading-relaxed">
+                Definišu koji kod se izvršava za koji URL. <code className="text-blue-400">GET /api/v1/clients</code> poziva
+                controller koji vraća listu klijenata. Svaka grupa resursa ima svoj fajl ruta.
+              </p>
+            </div>
+            <div className="p-4 rounded-xl sm:col-span-2 bg-gradient-to-br from-red-500/10 to-rose-500/5 border border-red-500/20">
+              <div className="flex items-center gap-2 mb-2">
+                <span>⚠️</span>
+                <h4 className="font-semibold text-red-300 text-sm">Error Handler</h4>
+              </div>
+              <p className="text-xs text-slate-400 leading-relaxed">
+                MORA biti poslednji middleware. Hvata sve greške koje nastanu bilo gde u lancu
+                i šalje korisniku razumljivu poruku umesto da server "pukne". Loguje grešku kroz Winston,
+                u dev modu vraća stack trace, u produkciji samo poruku. Bez njega — beli ekran smrti.
+              </p>
+            </div>
+          </div>
+        </div>
+
         <CodeBlock
           language="javascript"
           filename="app.js"

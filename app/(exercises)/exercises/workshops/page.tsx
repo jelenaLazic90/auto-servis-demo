@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useState, useCallback } from 'react';
+import React, { useEffect, useState, useCallback, useRef } from 'react';
 import WorkshopStep from '@/components/learn/WorkshopStep';
 import { WORKSHOPS } from '@/lib/learn-data/workshops';
 import { markCompleted } from '@/lib/store';
@@ -21,6 +21,7 @@ function saveWorkshopProgress(data: Record<string, boolean[]>) {
 export default function WorkshopsPage() {
   const [activeWorkshop, setActiveWorkshop] = useState<string | null>(null);
   const [progress, setProgress] = useState<Record<string, boolean[]>>({});
+  const workshopRefs = useRef<Record<string, HTMLDivElement | null>>({});
 
   useEffect(() => {
     markCompleted('workshops');
@@ -62,9 +63,17 @@ export default function WorkshopsPage() {
           const isComplete = completed === workshop.steps.length;
 
           return (
-            <div key={workshop.id}>
+            <div key={workshop.id} ref={(el) => { workshopRefs.current[workshop.id] = el; }}>
               <button
-                onClick={() => setActiveWorkshop(isActive ? null : workshop.id)}
+                onClick={() => {
+                  const newId = isActive ? null : workshop.id;
+                  setActiveWorkshop(newId);
+                  if (newId) {
+                    setTimeout(() => {
+                      workshopRefs.current[newId]?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    }, 100);
+                  }
+                }}
                 className={`w-full text-left p-5 rounded-2xl border transition-all hover:-translate-y-0.5 ${
                   isActive
                     ? 'bg-gradient-to-br from-emerald-500/10 to-teal-500/5 border-emerald-500/30 shadow-lg shadow-emerald-500/10'

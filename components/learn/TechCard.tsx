@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React from 'react';
 
 export interface TechCardData {
   name: string;
@@ -24,14 +24,19 @@ const categoryAccents: Record<string, string> = {
   Alati: 'border-l-amber-400',
 };
 
-export default function TechCard({ tech }: { tech: TechCardData }) {
-  const [expanded, setExpanded] = useState(false);
+interface TechCardProps {
+  tech: TechCardData;
+  expanded?: boolean;
+  onToggle?: () => void;
+}
+
+export default function TechCard({ tech, expanded = false, onToggle }: TechCardProps) {
   const gradient = categoryGradients[tech.category] || 'from-slate-500/15 to-slate-500/5';
   const accent = categoryAccents[tech.category] || 'border-l-slate-400';
 
   return (
     <div
-      onClick={() => setExpanded(!expanded)}
+      onClick={onToggle}
       className={`p-5 rounded-2xl border-l-4 ${accent} cursor-pointer transition-all bg-gradient-to-br ${gradient} border border-l-4 border-slate-700/30 hover:border-slate-600/50 ${
         expanded ? 'shadow-lg shadow-black/20 scale-[1.01]' : 'hover:-translate-y-1'
       }`}

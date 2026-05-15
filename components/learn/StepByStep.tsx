@@ -16,9 +16,15 @@ interface StepByStepProps {
 
 export default function StepByStep({ steps, title }: StepByStepProps) {
   const [activeStep, setActiveStep] = useState(0);
+  const containerRef = React.useRef<HTMLDivElement>(null);
+
+  const goToStep = (step: number) => {
+    setActiveStep(step);
+    containerRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  };
 
   return (
-    <div className="space-y-5">
+    <div className="space-y-5" ref={containerRef}>
       {title && <h3 className="text-lg font-semibold text-slate-200">{title}</h3>}
 
       {/* Step indicators */}
@@ -26,7 +32,7 @@ export default function StepByStep({ steps, title }: StepByStepProps) {
         {steps.map((step, i) => (
           <button
             key={i}
-            onClick={() => setActiveStep(i)}
+            onClick={() => goToStep(i)}
             className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm whitespace-nowrap transition-all ${
               i === activeStep
                 ? 'bg-indigo-500/20 text-indigo-300 border border-indigo-500/30 shadow-lg shadow-indigo-500/5'
@@ -66,14 +72,14 @@ export default function StepByStep({ steps, title }: StepByStepProps) {
       {/* Nav buttons */}
       <div className="flex justify-between">
         <button
-          onClick={() => setActiveStep(Math.max(0, activeStep - 1))}
+          onClick={() => goToStep(Math.max(0, activeStep - 1))}
           disabled={activeStep === 0}
           className="px-5 py-2.5 text-sm bg-slate-800/50 text-slate-300 rounded-xl border border-slate-700/30 hover:bg-slate-700/50 disabled:opacity-30 disabled:cursor-not-allowed transition-all"
         >
           ← Prethodni
         </button>
         <button
-          onClick={() => setActiveStep(Math.min(steps.length - 1, activeStep + 1))}
+          onClick={() => goToStep(Math.min(steps.length - 1, activeStep + 1))}
           disabled={activeStep === steps.length - 1}
           className="px-5 py-2.5 text-sm bg-indigo-500/20 text-indigo-300 rounded-xl border border-indigo-500/30 hover:bg-indigo-500/30 disabled:opacity-30 disabled:cursor-not-allowed transition-all"
         >

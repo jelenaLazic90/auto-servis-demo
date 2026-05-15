@@ -1,8 +1,9 @@
 'use client';
 
 import React from 'react';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import { NAV_SECTIONS } from '@/lib/constants';
+import { logout, getUser } from '@/lib/auth';
 
 interface HeaderProps {
   onMenuToggle: () => void;
@@ -19,7 +20,14 @@ function getPageTitle(pathname: string): string {
 
 export default function Header({ onMenuToggle }: HeaderProps) {
   const pathname = usePathname();
+  const router = useRouter();
   const title = getPageTitle(pathname);
+  const user = getUser();
+
+  const handleLogout = () => {
+    logout();
+    router.replace('/login');
+  };
 
   return (
     <header className="sticky top-0 z-30 flex items-center gap-4 px-4 py-3 bg-slate-900/80 backdrop-blur-md border-b border-slate-700/30">
@@ -34,7 +42,18 @@ export default function Header({ onMenuToggle }: HeaderProps) {
           <line x1="3" y1="18" x2="21" y2="18" />
         </svg>
       </button>
-      <h1 className="text-lg font-semibold text-white">{title}</h1>
+      <h1 className="text-lg font-semibold text-white flex-1">{title}</h1>
+      {user && (
+        <div className="flex items-center gap-3">
+          <span className="text-sm text-slate-400 hidden sm:inline">{user.email}</span>
+          <button
+            onClick={handleLogout}
+            className="px-3 py-1.5 text-sm text-slate-400 hover:text-white rounded-xl hover:bg-slate-800/50 border border-slate-700/30 transition-all"
+          >
+            Odjavi se
+          </button>
+        </div>
+      )}
     </header>
   );
 }

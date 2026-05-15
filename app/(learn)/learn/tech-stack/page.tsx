@@ -16,12 +16,21 @@ const catColors: Record<string, { active: string; icon: string }> = {
 
 export default function TechStackPage() {
   const [filter, setFilter] = useState('Sve');
+  const [expandedRow, setExpandedRow] = useState<number | null>(null);
 
   useEffect(() => {
     markCompleted('tech-stack');
   }, []);
 
   const filtered = filter === 'Sve' ? TECH_STACK : TECH_STACK.filter((t) => t.category === filter);
+
+  // Which row does card index belong to (2 columns)
+  const getRow = (index: number) => Math.floor(index / 2);
+
+  const toggleRow = (index: number) => {
+    const row = getRow(index);
+    setExpandedRow(expandedRow === row ? null : row);
+  };
 
   return (
     <div className="max-w-4xl mx-auto space-y-8">
@@ -38,7 +47,7 @@ export default function TechStackPage() {
         {CATEGORIES.map((cat) => (
           <button
             key={cat}
-            onClick={() => setFilter(cat)}
+            onClick={() => { setFilter(cat); setExpandedRow(null); }}
             className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-medium border transition-all ${
               filter === cat
                 ? catColors[cat].active
@@ -55,8 +64,13 @@ export default function TechStackPage() {
 
       {/* Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 stagger-children">
-        {filtered.map((tech) => (
-          <TechCard key={tech.name} tech={tech} />
+        {filtered.map((tech, i) => (
+          <TechCard
+            key={tech.name}
+            tech={tech}
+            expanded={expandedRow === getRow(i)}
+            onToggle={() => toggleRow(i)}
+          />
         ))}
       </div>
 
