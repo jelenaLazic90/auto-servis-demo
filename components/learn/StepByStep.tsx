@@ -18,21 +18,12 @@ interface StepByStepProps {
 export default function StepByStep({ steps, title, onStepChange }: StepByStepProps) {
   const [activeStep, setActiveStep] = useState(0);
   const contentRef = useRef<HTMLDivElement>(null);
-  const scrollContainerRef = useRef<HTMLDivElement>(null);
   const buttonRefs = useRef<(HTMLButtonElement | null)[]>([]);
 
   const scrollTabIntoView = useCallback((index: number) => {
-    const container = scrollContainerRef.current;
     const button = buttonRefs.current[index];
-    if (!container || !button) return;
-
-    const containerRect = container.getBoundingClientRect();
-    const buttonRect = button.getBoundingClientRect();
-
-    // Calculate button's position relative to the scroll container and center it
-    const buttonLeftInContainer = buttonRect.left - containerRect.left + container.scrollLeft;
-    const scrollTo = buttonLeftInContainer - containerRect.width / 2 + buttonRect.width / 2;
-    container.scrollTo({ left: Math.max(0, scrollTo), behavior: 'smooth' });
+    if (!button) return;
+    button.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
   }, []);
 
   const goToStep = (step: number) => {
@@ -49,7 +40,7 @@ export default function StepByStep({ steps, title, onStepChange }: StepByStepPro
       {title && <h3 className="text-lg font-semibold text-slate-200">{title}</h3>}
 
       {/* Step indicators */}
-      <div ref={scrollContainerRef} className="flex gap-2 overflow-x-auto pb-2 scroll-smooth">
+      <div className="flex gap-2 overflow-x-auto pb-2">
         {steps.map((step, i) => (
           <button
             key={i}
