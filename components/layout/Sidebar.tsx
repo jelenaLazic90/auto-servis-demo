@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import React, { useEffect, useRef, useCallback } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { NAV_SECTIONS } from '@/lib/constants';
@@ -20,6 +20,14 @@ const sectionStyles = [
 
 export default function Sidebar({ isOpen, onClose }: SidebarProps) {
   const pathname = usePathname();
+  const activeLinkRef = useRef<HTMLAnchorElement>(null);
+
+  useEffect(() => {
+    // Auto-scroll sidebar to show active link
+    setTimeout(() => {
+      activeLinkRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }, 100);
+  }, [pathname]);
 
   return (
     <>
@@ -66,6 +74,7 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
                       <li key={item.href}>
                         <Link
                           href={item.href}
+                          ref={isActive ? activeLinkRef : undefined}
                           onClick={onClose}
                           className={cn(
                             'flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm transition-all border-l-2 border-transparent',

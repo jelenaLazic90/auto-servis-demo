@@ -29,9 +29,10 @@ export default function StepByStep({ steps, title, onStepChange }: StepByStepPro
     const containerRect = container.getBoundingClientRect();
     const buttonRect = button.getBoundingClientRect();
 
-    // Center the button in the scroll container
-    const scrollLeft = button.offsetLeft - container.offsetWidth / 2 + button.offsetWidth / 2;
-    container.scrollTo({ left: scrollLeft, behavior: 'smooth' });
+    // Calculate button's position relative to the scroll container and center it
+    const buttonLeftInContainer = buttonRect.left - containerRect.left + container.scrollLeft;
+    const scrollTo = buttonLeftInContainer - containerRect.width / 2 + buttonRect.width / 2;
+    container.scrollTo({ left: Math.max(0, scrollTo), behavior: 'smooth' });
   }, []);
 
   const goToStep = (step: number) => {
