@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect } from 'react';
+import React, { useEffect, useRef } from 'react';
 import CodeBlock from '@/components/learn/CodeBlock';
 import FlowDiagram from '@/components/learn/FlowDiagram';
 import { markCompleted } from '@/lib/store';
@@ -21,10 +21,27 @@ const mvcFlow = [
   { label: 'Model', icon: '🗃️', color: 'purple' },
 ];
 
+const MIDDLEWARE_IDS = ['helmet', 'cors', 'json-parser', 'logger', 'rate-limiter', 'routes', 'error-handler'];
+
 export default function BackendPage() {
+  const middlewareRefs = useRef<Record<string, HTMLDivElement | null>>({});
+
   useEffect(() => {
     markCompleted('backend');
   }, []);
+
+  const scrollToMiddleware = (index: number) => {
+    const id = MIDDLEWARE_IDS[index];
+    if (id && middlewareRefs.current[id]) {
+      middlewareRefs.current[id]?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      // Flash highlight
+      const el = middlewareRefs.current[id];
+      if (el) {
+        el.classList.add('ring-2', 'ring-indigo-400/60');
+        setTimeout(() => el.classList.remove('ring-2', 'ring-indigo-400/60'), 1500);
+      }
+    }
+  };
 
   return (
     <div className="max-w-4xl mx-auto space-y-10">
@@ -43,13 +60,13 @@ export default function BackendPage() {
           Express je minimalistički framework koji pravi HTTP server. Prima zahteve, obrađuje ih, i šalje odgovore.
           Cela magija je u <strong className="text-slate-200">middleware</strong> funkcijama — svaki zahtev prolazi kroz lanac funkcija.
         </p>
-        <FlowDiagram nodes={middlewareChain} title="Middleware lanac" />
+        <FlowDiagram nodes={middlewareChain} title="Middleware lanac" onNodeClick={scrollToMiddleware} />
 
         {/* Middleware explanations */}
         <div className="space-y-3">
           <h3 className="text-base font-semibold text-slate-300">Šta radi svaki middleware?</h3>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-            <div className="p-4 rounded-xl bg-gradient-to-br from-red-500/10 to-red-500/5 border border-red-500/20">
+            <div ref={(el) => { middlewareRefs.current['helmet'] = el; }} className="p-4 rounded-xl bg-gradient-to-br from-red-500/10 to-red-500/5 border border-red-500/20 transition-all">
               <div className="flex items-center gap-2 mb-2">
                 <span>🛡️</span>
                 <h4 className="font-semibold text-red-300 text-sm">Helmet</h4>
@@ -59,7 +76,7 @@ export default function BackendPage() {
                 MIME-type sniffing i druge česte napade. Kao zaštitna kaciga za tvoj server.
               </p>
             </div>
-            <div className="p-4 rounded-xl bg-gradient-to-br from-yellow-500/10 to-amber-500/5 border border-yellow-500/20">
+            <div ref={(el) => { middlewareRefs.current['cors'] = el; }} className="p-4 rounded-xl bg-gradient-to-br from-yellow-500/10 to-amber-500/5 border border-yellow-500/20 transition-all">
               <div className="flex items-center gap-2 mb-2">
                 <span>🌐</span>
                 <h4 className="font-semibold text-yellow-300 text-sm">CORS</h4>
@@ -70,7 +87,7 @@ export default function BackendPage() {
                 na localhost:3000 sme da pristupi backendu na localhost:5000.
               </p>
             </div>
-            <div className="p-4 rounded-xl bg-gradient-to-br from-slate-500/10 to-slate-500/5 border border-slate-600/20">
+            <div ref={(el) => { middlewareRefs.current['json-parser'] = el; }} className="p-4 rounded-xl bg-gradient-to-br from-slate-500/10 to-slate-500/5 border border-slate-600/20 transition-all">
               <div className="flex items-center gap-2 mb-2">
                 <span>📦</span>
                 <h4 className="font-semibold text-slate-300 text-sm">JSON Parser</h4>
@@ -81,7 +98,7 @@ export default function BackendPage() {
                 tako da u kontroleru možeš čitati podatke koje je frontend poslao.
               </p>
             </div>
-            <div className="p-4 rounded-xl bg-gradient-to-br from-blue-500/10 to-indigo-500/5 border border-blue-500/20">
+            <div ref={(el) => { middlewareRefs.current['logger'] = el; }} className="p-4 rounded-xl bg-gradient-to-br from-blue-500/10 to-indigo-500/5 border border-blue-500/20 transition-all">
               <div className="flex items-center gap-2 mb-2">
                 <span>📝</span>
                 <h4 className="font-semibold text-blue-300 text-sm">Logger (Morgan + Winston)</h4>
@@ -92,7 +109,7 @@ export default function BackendPage() {
                 Bez toga ne bi znao šta se dešava na serveru.
               </p>
             </div>
-            <div className="p-4 rounded-xl bg-gradient-to-br from-amber-500/10 to-orange-500/5 border border-amber-500/20">
+            <div ref={(el) => { middlewareRefs.current['rate-limiter'] = el; }} className="p-4 rounded-xl bg-gradient-to-br from-amber-500/10 to-orange-500/5 border border-amber-500/20 transition-all">
               <div className="flex items-center gap-2 mb-2">
                 <span>🚦</span>
                 <h4 className="font-semibold text-amber-300 text-sm">Rate Limiter</h4>
@@ -103,7 +120,7 @@ export default function BackendPage() {
                 napada i sprečava da neko preoptereti server.
               </p>
             </div>
-            <div className="p-4 rounded-xl bg-gradient-to-br from-emerald-500/10 to-teal-500/5 border border-emerald-500/20">
+            <div ref={(el) => { middlewareRefs.current['routes'] = el; }} className="p-4 rounded-xl bg-gradient-to-br from-emerald-500/10 to-teal-500/5 border border-emerald-500/20 transition-all">
               <div className="flex items-center gap-2 mb-2">
                 <span>🔀</span>
                 <h4 className="font-semibold text-emerald-300 text-sm">Routes</h4>
@@ -113,7 +130,7 @@ export default function BackendPage() {
                 controller koji vraća listu klijenata. Svaka grupa resursa ima svoj fajl ruta.
               </p>
             </div>
-            <div className="p-4 rounded-xl sm:col-span-2 bg-gradient-to-br from-red-500/10 to-rose-500/5 border border-red-500/20">
+            <div ref={(el) => { middlewareRefs.current['error-handler'] = el; }} className="p-4 rounded-xl sm:col-span-2 bg-gradient-to-br from-red-500/10 to-rose-500/5 border border-red-500/20 transition-all">
               <div className="flex items-center gap-2 mb-2">
                 <span>⚠️</span>
                 <h4 className="font-semibold text-red-300 text-sm">Error Handler</h4>

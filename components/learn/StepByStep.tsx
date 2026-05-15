@@ -16,15 +16,17 @@ interface StepByStepProps {
 
 export default function StepByStep({ steps, title }: StepByStepProps) {
   const [activeStep, setActiveStep] = useState(0);
-  const containerRef = React.useRef<HTMLDivElement>(null);
+  const contentRef = React.useRef<HTMLDivElement>(null);
 
   const goToStep = (step: number) => {
     setActiveStep(step);
-    containerRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    setTimeout(() => {
+      contentRef.current?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }, 50);
   };
 
   return (
-    <div className="space-y-5" ref={containerRef}>
+    <div className="space-y-5">
       {title && <h3 className="text-lg font-semibold text-slate-200">{title}</h3>}
 
       {/* Step indicators */}
@@ -52,7 +54,7 @@ export default function StepByStep({ steps, title }: StepByStepProps) {
       </div>
 
       {/* Step content */}
-      <div className="p-6 rounded-2xl bg-gradient-to-br from-slate-800/50 to-slate-900/50 border border-slate-700/30 space-y-4 animate-fade-in">
+      <div ref={contentRef} className="p-6 rounded-2xl bg-gradient-to-br from-slate-800/50 to-slate-900/50 border border-slate-700/30 space-y-4 animate-fade-in">
         <h4 className="text-lg font-bold text-white">
           <span className="text-indigo-400">Korak {activeStep + 1}:</span> {steps[activeStep].title}
         </h4>

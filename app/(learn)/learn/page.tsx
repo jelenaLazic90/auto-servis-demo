@@ -13,6 +13,7 @@ const features = [
     title: 'Kako radi web',
     desc: 'Frontend, backend, baza — od klika do odgovora',
     color: 'from-blue-500/20 to-indigo-500/10',
+    href: '/learn/how-web-works',
   },
   {
     icon: '⚡',
@@ -20,6 +21,7 @@ const features = [
     title: 'Tech stack',
     desc: 'React, Next.js, Express, MySQL, Tailwind...',
     color: 'from-purple-500/20 to-pink-500/10',
+    href: '/learn/tech-stack',
   },
   {
     icon: '🤖',
@@ -27,6 +29,7 @@ const features = [
     title: 'AI workflow',
     desc: 'Agenti, skillovi, komande — automatizuj razvoj',
     color: 'from-emerald-500/20 to-teal-500/10',
+    href: '/handoff',
   },
   {
     icon: '🎯',
@@ -34,6 +37,7 @@ const features = [
     title: 'Vežbe & kvizovi',
     desc: 'Testiraj znanje, vežbaj sa Claude Code-om',
     color: 'from-amber-500/20 to-orange-500/10',
+    href: '/exercises/scenarios',
   },
 ];
 
@@ -74,14 +78,15 @@ export default function LearnPage() {
       {/* Features grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 stagger-children">
         {features.map((f) => (
-          <div
+          <Link
             key={f.title}
-            className={`p-6 rounded-2xl bg-gradient-to-br ${f.color} border border-slate-700/30 hover:border-slate-600/50 transition-all hover:-translate-y-1 hover:shadow-xl hover:shadow-black/20`}
+            href={f.href}
+            className={`block p-6 rounded-2xl bg-gradient-to-br ${f.color} border border-slate-700/30 hover:border-slate-600/50 transition-all hover:-translate-y-1 hover:shadow-xl hover:shadow-black/20`}
           >
             <div className={`icon-bg ${f.iconBg} mb-4`}>{f.icon}</div>
             <h3 className="text-lg font-bold text-white mb-1">{f.title}</h3>
             <p className="text-sm text-slate-400 leading-relaxed">{f.desc}</p>
-          </div>
+          </Link>
         ))}
       </div>
 

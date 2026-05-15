@@ -11,6 +11,7 @@ export interface FlowNode {
 interface FlowDiagramProps {
   nodes: FlowNode[];
   title?: string;
+  onNodeClick?: (index: number) => void;
 }
 
 const colorMap: Record<string, string> = {
@@ -22,7 +23,7 @@ const colorMap: Record<string, string> = {
   gray: 'bg-gradient-to-br from-slate-500/20 to-slate-500/10 border-slate-500/30 text-slate-300',
 };
 
-export default function FlowDiagram({ nodes, title }: FlowDiagramProps) {
+export default function FlowDiagram({ nodes, title, onNodeClick }: FlowDiagramProps) {
   return (
     <div className="space-y-4">
       {title && <h3 className="text-lg font-semibold text-slate-200">{title}</h3>}
@@ -30,7 +31,8 @@ export default function FlowDiagram({ nodes, title }: FlowDiagramProps) {
         {nodes.map((node, i) => (
           <React.Fragment key={i}>
             <div
-              className={`flex items-center gap-2 px-5 py-3 rounded-xl border transition-all hover:scale-105 hover:shadow-lg hover:shadow-black/20 ${colorMap[node.color] || colorMap.gray}`}
+              onClick={() => onNodeClick?.(i)}
+              className={`flex items-center gap-2 px-5 py-3 rounded-xl border transition-all hover:scale-105 hover:shadow-lg hover:shadow-black/20 ${onNodeClick ? 'cursor-pointer' : ''} ${colorMap[node.color] || colorMap.gray}`}
             >
               <span className="text-xl">{node.icon}</span>
               <span className="text-sm font-semibold">{node.label}</span>
